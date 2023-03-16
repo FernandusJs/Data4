@@ -1,4 +1,4 @@
-# SparkDelta
+# DataBricks
 
 
 
@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.com/kdg-ti/bigdata/sparkdelta.git
+git remote add origin https://gitlab.com/kdg-ti/bigdata/databricks.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.com/kdg-ti/bigdata/sparkdelta/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.com/kdg-ti/bigdata/databricks/-/settings/integrations)
 
 ## Collaborate with your team
 
