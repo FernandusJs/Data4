@@ -2,11 +2,18 @@
 Follow instructions on Canvas to create your python virtual environment.
 
 ### Making sure to use the correct java version
+1. If not already installed on your system, install a Java version 8 up to 17 (NOT 18 or 20!) from https://www.oracle.com/java/technologies/javase/
+2. Make sure JAVA_HOME is set to the correct version of Java (8-17) and that it is added to the PATH environment variable. (ex. JAVA_HOME: C:\Program Files\Java\jdk-11.0.8\)
+
+### Loading this project in PyCharm
+1. Open PyCharm
+2. Select "Get from VCS"
+3. Use https://gitlab.com/kdg-ti/bigdata/sparkdelta.git as the URL and provide your credentials for GitLab
 
 ### Installing the required packages
 1. Go to terminal in PyCharm
-2. Run the command: pip install -re requirements.txt (it icludes all the neccecairy packages for this cource)
-3. Make sure all is packages are installed correctly (if you have errors, try to solve them and rund the command again)
+2. Run the command: pip install -re requirements.txt (it includes all the necessary packages for this course)
+3. Make sure all is packages are installed correctly (if you have errors, try to solve them and run the command again)
 4. if the IDE asks to install jupyter, do so.
 5. Download Apache Spark 3.3.2 (Feb 13 release): https://www.apache.org/dyn/closer.lua/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.tgz
 6. Unpack the downloaded file to a folder with your hadoop tools (ex. c:/hadoopTools). Unpacked directory later referred as SPARK DIRECTORY
@@ -14,13 +21,14 @@ _ATTENTION: In windows: unpack it to a (sub)folder of your main drive. Do not in
 7. Perform these extra steps in Windows:
    8. Download thet Hadoop winutils folder https://canvas.kdg.be/files/3251662/download?download_frd=1
    9. Unpack to the same (ex. c:/hadoopTools) directory (you should have a Spark and Hadoop directory now)
-10. Add the necessery environment variabeles to your system 
+10. Add the necessery environment variables to your system  (https://www.how2shout.com/how-to/how-to-add-environment-variables-in-windows-11.html)
     11. HADOOP_HOME =[PATH TO HADOOP DIRECTORY] (ex. C:\hadoopTools\hadoop-3.3.1\)
     12. SPARK_HOME = [PATH TO SPARK DIRECTORY] (ex. C:\hadoopTools\spark-3.3.2-bin-hadoop3\)
     13. Add %HADOOP_HOME%\bin to PATH environment-variable
     14. Add %SPARK_HOME%\bin to PATH environment-variable
 
-%HADOOP_HOME%\bin  removed from path
-Sparkt bin folder added to path
-
-SPARK_HOME C:\hadoopTools\spark-3.1.1-bin-hadoop3.2
+### Performing the first run
+1. Open the installCheck.py file in PyCharm
+2. Run all cells one by one and check if everything is working correctly
+3. If you have errors, try to solve them and run the cells again.
+4. If you are stuck and cannot solve the errors, contact the teacher.
