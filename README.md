@@ -16,13 +16,7 @@
 5. In Settings >Project Settings > Python Interpreter, select Add interpreter... > Add local interpreter > Environment New > Base: 3.9 > OK
 6. Make sure this new created environment is selected as the interpreter for this project
 
-### 4. Installing the required packages
-1. Go to terminal in PyCharm
-2. Run the command: pip install -re requirements.txt (it includes all the necessary packages for this course)
-3. Make sure all the packages are installed correctly (if you have errors, try to solve them and run the command again)
-4. If the IDE asks to install jupyter, do so.
-
-### 5. Installing Apache Spark and Hadoop
+### 4. Installing Apache Spark and Hadoop
 1. Download Apache Spark 3.3.2 (Feb 13 release): https://www.apache.org/dyn/closer.lua/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.tgz
 2. Unpack the downloaded file to a folder with your hadoop tools (ex. c:/hadoopTools). Unpacked directory later referred as SPARK DIRECTORY
 _ATTENTION: In windows: unpack it to a (sub)folder of your main drive. Do not install it in a user folder. This causes many problems_
@@ -34,6 +28,14 @@ _ATTENTION: In windows: unpack it to a (sub)folder of your main drive. Do not in
     8. SPARK_HOME = [PATH TO SPARK DIRECTORY] (ex. C:\hadoopTools\spark-3.3.2-bin-hadoop3\)
     9. Add %HADOOP_HOME%\bin to PATH environment-variable
     10. Add %SPARK_HOME%\bin to PATH environment-variable
+
+### 5. Installing the required packages
+1. Go to terminal in PyCharm
+2. Run the command: pip install -re requirements.txt (it includes all the necessary packages for this course)
+3. Make sure all the packages are installed correctly (if you have errors, try to solve them and run the command again)
+4. If the IDE asks to install jupyter, do so.
+
+
 
 ### 6. Performing the first run
 1. Open the installCheck.py file in PyCharm
