@@ -21,4 +21,4 @@ def get_Property(propertyName):
 #List with all the needed jars. If your sparkJob needs extra jors, add them here.
 jars = ["./jars/mssql-jdbc-10.2.1.jre8.jar"]
 
-
+jars_loc = "file:///C:/DevProjects/Databricks/jars/"
