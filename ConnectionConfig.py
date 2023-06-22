@@ -1,4 +1,7 @@
 from configparser import ConfigParser
+from delta import configure_spark_with_delta_pip
+from pyspark.sql import SparkSession, HiveContext
+
 #Configparser is a helper class to read properties from a configuration file
 config = ConfigParser()
 config.read('config.ini') #Define connection properties is the config file
@@ -18,7 +21,16 @@ def set_connection(connectionName):
 def get_Property(propertyName):
   return config.get(cn, propertyName)
 
-#List with all the needed jars. If your sparkJob needs extra jors, add them here.
-jars = ["./jars/mssql-jdbc-10.2.1.jre8.jar"]
+def startLocalCluster(appName, partitions=4):
+    builder = SparkSession.builder \
+        .appName(appName) \
+        .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
+        .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
+        .config("spark.sql.shuffle.partitions", partitions) \
+        .master("local[*]")
 
-jars_loc = "file:///C:/DevProjects/Databricks/jars/"
+    extra_packages = ["org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2","com.microsoft.sqlserver:mssql-jdbc:12.2.0.jre8"]
+    builder = configure_spark_with_delta_pip(builder, extra_packages=extra_packages)
+    spark = builder.getOrCreate()
+    print(spark.getActiveSession())
+    return spark

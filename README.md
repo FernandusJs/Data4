@@ -6,7 +6,6 @@
 
 ### 2. Making sure to use the correct Java version
 1. If not already installed on your system, install a Java version 8 up to 17 (NOT 18 or 20!) from https://www.oracle.com/java/technologies/javase/
-2. Make sure JAVA_HOME is set to the correct version of Java (8-17) and that it is added to the PATH environment variable. (ex. JAVA_HOME: C:\Program Files\Java\jdk-11.0.8\)
 
 ### 3. Loading this project in PyCharm
 1. Open PyCharm
@@ -17,28 +16,24 @@
 6. Make sure this new created environment is selected as the interpreter for this project
 
 ### 4. Installing Apache Spark and Hadoop
-1. Download Apache Spark 3.3.2 (Feb 13 release): https://www.apache.org/dyn/closer.lua/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.tgz
-2. Unpack the downloaded file to a folder with your hadoop tools (ex. c:/hadoopTools). Unpacked directory later referred as SPARK DIRECTORY
-_ATTENTION: In windows: unpack it to a (sub)folder of your main drive. Do not install it in a user folder. This causes many problems_
+1. Download Apache Spark 3.4.0 (Feb 13 release): https://www.apache.org/dyn/closer.lua/spark/spark-3.4.0/spark-3.4.0-bin-hadoop3.tgz
+2. Unpack the downloaded file to a folder with your bigdata tools (ex. c:/bigdataTools). Unpacked directory later referred as SPARK DIRECTORY
+_ATTENTION: In windows: unpack it to a (sub)folder of your main drive. Do not install it in a user folder. This causes  problems_
 3. Perform these extra steps in Windows:
-   4. Download thet Hadoop winutils folder https://canvas.kdg.be/files/3251662/download?download_frd=1
-   5. Unpack to the same (ex. c:/hadoopTools) directory (you should have a Spark and Hadoop directory now)
-6. Add the necessery environment variables to your system  (https://www.how2shout.com/how-to/how-to-add-environment-variables-in-windows-11.html)
-    7. HADOOP_HOME =[PATH TO HADOOP DIRECTORY] (ex. C:\hadoopTools\hadoop-3.3.1\)
-    8. SPARK_HOME = [PATH TO SPARK DIRECTORY] (ex. C:\hadoopTools\spark-3.3.2-bin-hadoop3\)
-    9. Add %HADOOP_HOME%\bin to PATH environment-variable
-    10. Add %SPARK_HOME%\bin to PATH environment-variable
+   4. Download thet Hadoop winutils folder from Canvas
+   5. Unpack to the same (ex. c:/bigdataTools) directory (you should have a Spark and Hadoop directory now)
+6. Customize the environment directories in EnvironomentSetup.py file. See instructions in file.
 
 ### 5. Installing the required packages
+_If PyCharm asks to install required packages when opening the project, do so. If not, follow these steps:_
 1. Go to terminal in PyCharm
 2. Run the command: pip install -re requirements.txt (it includes all the necessary packages for this course)
 3. Make sure all the packages are installed correctly (if you have errors, try to solve them and run the command again)
 4. If the IDE asks to install jupyter, do so.
 
-
-
 ### 6. Performing the first run
-1. Open the installCheck.py file in PyCharm
+1. Open the CHECK_1_install.ipynb file in PyCharm
 2. Run all cells one by one and check if everything is working correctly
 3. If you have errors, try to solve them and run the cells again.
 4. If you are stuck and cannot solve the errors, contact the teacher.
+5. If everything is working correctly, you are ready to start the course!
