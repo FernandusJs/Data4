@@ -3,7 +3,6 @@
 2. WINDOWS: make sure to check the box "Add Python 3.9 to PATH" during installation
 3. After installation, open a terminal and run the command: python --version (should be 3.9.x)
 
-
 ### 2. Making sure to use the correct Java version
 1. If not already installed on your system, install a Java version 8 up to 17 (NOT 18 or 20!) from https://www.oracle.com/java/technologies/javase/
 
@@ -16,13 +15,10 @@
 6. Make sure this new created environment is selected as the interpreter for this project
 
 ### 4. Installing Apache Spark and Hadoop
-1. Download Apache Spark 3.4.0 (Feb 13 release): https://www.apache.org/dyn/closer.lua/spark/spark-3.4.0/spark-3.4.0-bin-hadoop3.tgz
+1. Download bigdatatools.zip from Canvas
 2. Unpack the downloaded file to a folder with your bigdata tools (ex. c:/bigdataTools). Unpacked directory later referred as SPARK DIRECTORY
 _ATTENTION: In windows: unpack it to a (sub)folder of your main drive. Do not install it in a user folder. This causes  problems_
-3. Perform these extra steps in Windows:
-   4. Download thet Hadoop winutils folder from Canvas
-   5. Unpack to the same (ex. c:/bigdataTools) directory (you should have a Spark and Hadoop directory now)
-6. Customize the environment directories in EnvironomentSetup.py file. See instructions in file.
+3. Customize the environment directories in EnvironomentSetup.py file. See instructions in file.
 
 ### 5. Installing the required packages
 _If PyCharm asks to install required packages when opening the project, do so. If not, follow these steps:_
