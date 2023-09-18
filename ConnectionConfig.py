@@ -2,14 +2,15 @@ from configparser import ConfigParser
 from delta import configure_spark_with_delta_pip
 from pyspark.sql import SparkSession, HiveContext
 import os
-#Change to the root path of you installation directories. (ex. c:\\bigdatatools\spark-3.4.0-bin-hadoop3)
 
+#ENVIRONMENT DIRECTORIES
+#Change to the root path of you installation directories. (ex. c:\\tools\bigdatatools\spark-3.4.0-bin-hadoop3)
 spark_home = "C:\DevApps\\bigdatatools\spark-3.4.0-bin-hadoop3" # Change to own hadoop-folder. Use double slaches when needed. You can also use os.sep instead of the double slaches.
 hadoop_home = "C:\DevApps\\bigdatatools\hadoop-3.4.0-win10-x64" # For windows: use the downloaded hadoop folder. For linux/mac: I'm not sure at the moment :-)
 java_home = "C:\Program Files\Java\jdk-11.0.8"
+#########################
 
-
-# Do not change!
+# DO NOT CHANGE ANYTHING BELOW THIS LINE
 #This function can be used to set systemvariables before running code. This eliminates the need to set the variables in the os.
 def setupEnvironment():
     os.environ["PYSPARK_PYTHON"] = "python"
