@@ -1,8 +1,8 @@
-In order to be able to run the code in this repository, you need to install some software and packages. Follow the instructions with care.
+In order to be able to run the code in this repository, you need to install some software and packages. Follow the instructions with care. Don't skip any steps. If you have any problems, use the Teams channel to ask for help.
 
 ### 1. Install Python
-1. Install the latest version of python 3.9 from https://www.python.org/downloads/ (WINDOWS: https://www.python.org/downloads/release/python-3913/)
-2. WINDOWS: make sure to check the box "Add Python 3.9 to PATH" during installation
+1. Install the latest version of python 3.12 from https://www.python.org/downloads/ (WINDOWS: https://www.python.org/downloads/release/python-3913/)
+2. WINDOWS: make sure to check the box "Add Python 3.12 to PATH" during installation
 3. After installation, open a terminal and run the command: python --version (should be 3.9.x)
 
 ### 2. Making sure to use the correct Java version

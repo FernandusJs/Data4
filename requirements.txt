@@ -1,5 +1,5 @@
-pandas==1.5.3
-numpy==1.24.2
-pyspark==3.4.0
-delta-spark==2.4.0
+pandas==2.2.2
+numpy==2.0.2
+pyspark==3.5.2
+delta-spark==3.2.0
 kafka-python==2.0.2
