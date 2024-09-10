@@ -58,7 +58,7 @@ def create_jdbc():
 
 
 # Set the connectionName that has to be used (if you don't want to use the default profile
-def set_connection(connectionName):
+def set_connectionProfile(connectionName):
     global cn
     cn = connectionName
 
