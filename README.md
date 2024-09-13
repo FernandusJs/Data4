@@ -29,9 +29,10 @@ _If PyCharm asks to install required packages when opening the project, do so. I
 3. Make sure all the packages are installed correctly (if you have errors, try to solve them and run the command again)
 4. If the IDE asks to install jupyter, do so.
 
-### 6. Performing the first run
+### 6. Performing the first testruns
 1. Open the CHECK_1_install.ipynb file in PyCharm
 2. Run all cells one by one and check if everything is working correctly
 3. If you have errors, try to solve them and run the cells again.
 4. If you are stuck and cannot solve the errors, contact the teacher.
 5. If everything is working correctly, you are ready to start the course!
+6. Now do the same for 04_00_CHECK_jdbcConnection.ipynb
