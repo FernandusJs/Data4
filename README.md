@@ -13,7 +13,7 @@ In order to be able to run the code in this repository, you need to install some
 2. Select "Get from VCS"
 3. Use https://gitlab.com/kdg-ti/bigdata/sparkdelta.git as the URL and provide your credentials for GitLab
 4. Do not yet create a virtual environment if asked in a popup.
-5. In Settings >Project Settings > Python Interpreter, select Add interpreter... > Add local interpreter > Environment New > Base: 3.9 > OK
+5. In Settings >Project Settings > Python Interpreter, select Add interpreter... > Add local interpreter > Environment New > Base: 3.11 > OK
 6. Make sure this new created environment is selected as the interpreter for this project
 
 ### 4. Installing Apache Spark and Hadoop
