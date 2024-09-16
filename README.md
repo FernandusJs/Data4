@@ -1,7 +1,7 @@
 In order to be able to run the code in this repository, you need to install some software and packages. Follow the instructions with care. Don't skip any steps. If you have any problems, use the Teams channel to ask for help.
 
 ### 1. Install Python
-1. Install the latest version of python 3.11 (3.12 gives compatibility issues) from https://www.python.org/downloads/ (WINDOWS: https://www.python.org/downloads/release/python-3913/)
+1. Install the latest version of python 3.11 (3.12 gives compatibility issues) from https://www.python.org/downloads/ (WINDOWS: https://www.python.org/downloads/release/python-3119/)
 2. WINDOWS: make sure to check the box "Add Python 3.11 to PATH" during installation
 3. After installation, open a terminal and run the command: python --version (should be 3.11.x)
 
