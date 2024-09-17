@@ -29,7 +29,11 @@ _If PyCharm asks to install required packages when opening the project, do so. I
 3. Make sure all the packages are installed correctly (if you have errors, try to solve them and run the command again)
 4. If the IDE asks to install jupyter, do so.
 
-### 6. Performing the first testruns
+### 6. Install Big Data Tools plugin
+_PyCharm has a set of plugins that helps you running Spark Applications._
+2. Search for Big Data Tools and install the plugin
+
+### 7. Performing the first testruns
 1. Open the CHECK_1_install.ipynb file in PyCharm
 2. Run all cells one by one and check if everything is working correctly
 3. If you have errors, try to solve them and run the cells again.
