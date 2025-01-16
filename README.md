@@ -39,4 +39,4 @@ _PyCharm has a set of plugins that helps you running Spark Applications._
 3. If you have errors, try to solve them and run the cells again.
 4. If you are stuck and cannot solve the errors, contact the teacher.
 5. If everything is working correctly, you are ready to start the course!
-6. Now do the same for 04_00_CHECK_jdbcConnection.ipynb
+

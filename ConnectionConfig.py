@@ -45,7 +45,7 @@ def startLocalCluster(appName, partitions=4):
         .config("spark.executor.extraJavaOptions", "-Dsasl.mechanism=PLAIN") \
         .master("local[*]")
 
-    extra_packages = ["org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0",get_Property("driver_repo")]
+    extra_packages = ["org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0",get_Property("driver_repo"),"org.elasticsearch:elasticsearch-spark-30_2.12:8.15.2"]
   # These are the packages that are needed for the sparksession to work with kafka and sqlserver
     builder = configure_spark_with_delta_pip(builder, extra_packages=extra_packages) # This function adds the delta-lake package to the sparksession and adds the extra packages to all the executors.
     spark = builder.getOrCreate()
