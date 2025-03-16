@@ -7,7 +7,7 @@ import os
 #Change to the root path of you installation directories. (ex. c:\\tools\bigdatatools\spark-3.5.2-bin-hadoop3)
 spark_home = f"C:{os.sep}DevApps{os.sep}bigdatatools{os.sep}spark-3.5.2-bin-hadoop3" # Change to own hadoop-folder. Use double slashes when needed. You can also use os.sep instead of the double slaches.
 hadoop_home = f"C:{os.sep}DevApps{os.sep}bigdatatools{os.sep}hadoop-3.4.0-win10-x64" # For windows: use the hadoop folder in bigdatatools. For linux/mac: Try with provided hadoop folder in bigdatatools, if that doesn't work, download hadoop from the apache website: https://hadoop.apache.org/release/3.4.0.html
-java_home = "C:"+ os.sep + "Program Files" + os.sep +"Java" +os.sep + "jdk-11"
+java_home = "C:"+ os.sep + "Program Files" + os.sep +"Java" +os.sep + "jdk-17"
 #########################
 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE
