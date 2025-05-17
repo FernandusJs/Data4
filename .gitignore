@@ -1,3 +1,5 @@
 /spark-warehouse/
 /sparkSQLDemo.ipynb
 *Demo*
+config.ini
+ConnectionConfig.py
