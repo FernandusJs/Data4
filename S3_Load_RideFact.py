@@ -5,11 +5,8 @@ import ConnectionConfig as cc
 cc.set_connectionProfile("dw_rides")
 jdbc_url_target = cc.create_jdbc()
 
-# Select only 1 row
-df_test = df_fact_rides.limit(1)
-
 # Write to RidesFact table
-df_test.write \
+df_fact_rides.write \
     .format("jdbc") \
     .option("driver", "org.postgresql.Driver") \
     .option("url", jdbc_url_target) \

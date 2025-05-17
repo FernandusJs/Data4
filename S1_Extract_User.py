@@ -1,12 +1,11 @@
-# S1_Extract_User.py
-
 import pyspark
 from pyspark.sql import SparkSession
 import ConnectionConfig as cc
 from delta import configure_spark_with_delta_pip
 
-# Initialize Spark
+# Initialize Spark environment
 cc.setupEnvironment()
+
 builder = SparkSession.builder.appName("Extract_User") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
@@ -20,11 +19,11 @@ builder = configure_spark_with_delta_pip(builder, extra_packages=extra_packages)
 spark = builder.getOrCreate()
 spark.sparkContext.setLogLevel("DEBUG")
 
-# Set connection profile to velodb
+# Connect to velodb
 cc.set_connectionProfile("velodb")
 jdbc_url = cc.create_jdbc()
 
-# Extract velo_users table
+# 🚴 Extract velo_users
 df_users = spark.read.format("jdbc") \
     .option("driver", "org.postgresql.Driver") \
     .option("url", jdbc_url) \
@@ -33,7 +32,7 @@ df_users = spark.read.format("jdbc") \
     .option("password", cc.get_Property("password")) \
     .load()
 
-# Extract subscriptions table (we need validfrom as time marker)
+# 📦 Extract subscriptions
 df_subscriptions = spark.read.format("jdbc") \
     .option("driver", "org.postgresql.Driver") \
     .option("url", jdbc_url) \
@@ -42,8 +41,18 @@ df_subscriptions = spark.read.format("jdbc") \
     .option("password", cc.get_Property("password")) \
     .load()
 
-# Register as temp views
+# 📋 Extract subscription_types (needed for duration logic)
+df_subscription_types = spark.read.format("jdbc") \
+    .option("driver", "org.postgresql.Driver") \
+    .option("url", jdbc_url) \
+    .option("dbtable", "subscription_types") \
+    .option("user", cc.get_Property("username")) \
+    .option("password", cc.get_Property("password")) \
+    .load()
+
+# 🗂 Register views for SQL use
 df_users.createOrReplaceTempView("extracted_users")
 df_subscriptions.createOrReplaceTempView("extracted_subscriptions")
+df_subscription_types.createOrReplaceTempView("subscription_types")
 
-print("✅ User and Subscriptions data extracted successfully!")
+print("✅ User, Subscriptions, and Subscription Types extracted successfully!")

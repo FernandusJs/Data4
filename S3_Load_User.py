@@ -15,7 +15,7 @@ df_scd2.write \
     .option("dbtable", "UserDim") \
     .option("user", cc.get_Property("username")) \
     .option("password", cc.get_Property("password")) \
-    .mode("append") \
+    .mode("overwrite") \
     .save()
 
 print("✅ UserDim table loaded successfully into dw_rides!")

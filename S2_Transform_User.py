@@ -1,8 +1,7 @@
-# S2_Transform_User.py
-
 from S1_Extract_User import spark
+from pyspark.sql.functions import expr
 
-# Combine users and subscriptions to get address per validfrom date
+# Join subscriptions with subscription_types to get the type duration
 df_transformed = spark.sql("""
     SELECT
         u.userid AS user_id,
@@ -11,22 +10,31 @@ df_transformed = spark.sql("""
         u.zipcode,
         u.city,
         u.country_code,
-        s.validfrom AS start_date
+        s.validfrom AS start_date,
+        st.description AS subscription_type
     FROM extracted_users u
-    JOIN extracted_subscriptions s
-        ON u.userid = s.userid
+    JOIN extracted_subscriptions s ON u.userid = s.userid
+    JOIN subscription_types st ON s.subscriptiontypeid = st.subscriptiontypeid
 """)
 
-from pyspark.sql.window import Window
-from pyspark.sql.functions import lead
-
-window_spec = Window.partitionBy("user_id").orderBy("start_date")
-
+# Compute end_date based on subscription type
 df_scd2 = df_transformed.withColumn(
     "end_date",
-    lead("start_date").over(window_spec)
+    expr("""
+        CASE
+            WHEN subscription_type = 'DAG' THEN date_add(start_date, 1)
+            WHEN subscription_type = 'MAAND' THEN add_months(start_date, 1)
+            WHEN subscription_type = 'JAAR' THEN add_months(start_date, 12)
+            ELSE date_add(start_date, 1)  -- fallback
+        END
+    """)
 )
 
-df_scd2.createOrReplaceTempView("transformed_users")
+# Drop type (optional) and show sample
+df_scd2 = df_scd2.drop("subscription_type")
 
+print("✅ Preview transformed user dimension with correct end dates:")
+df_scd2.orderBy("user_id", "start_date").show(truncate=False)
+
+df_scd2.createOrReplaceTempView("transformed_users")
 print("✅ User data transformed successfully!")
