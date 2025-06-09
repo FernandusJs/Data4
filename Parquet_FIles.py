@@ -22,7 +22,7 @@ jdbc_url = cc.create_jdbc()
 output_base = "output"  # or absolute path like "C:/Users/filip/ExportedParquet"
 
 # 🗂 Tables to extract
-tables = ["UserDim", "DateDim", "LockDim", "VehicleDim", "RidesFact", "WeatherDim"]
+tables = ["UserDim", "RidesFact"]
 
 for table in tables:
     print(f"📥 Extracting {table}")

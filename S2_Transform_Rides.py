@@ -108,7 +108,7 @@ df_user_match = df_rides_weather.alias("r") \
           (col("s.userid") == col("u.user_id")) &
           (col("r.starttime").cast("date").between(col("u.start_date"), col("u.end_date"))),
           how="left") \
-    .selectExpr("r.*", "s.userid", "u.user_id as user_sk")
+    .selectExpr("r.*", "s.userid", "u.user_sk")
 
 # Debug print
 print("🧪 SCD2 Join — Sample with user_sk")

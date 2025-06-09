@@ -1,5 +1,8 @@
+
+
 from S1_Extract_User import spark
 from pyspark.sql.functions import expr
+from pyspark.sql.functions import lead, monotonically_increasing_id
 
 # Join subscriptions with subscription_types to get the type duration
 df_transformed = spark.sql("""
@@ -32,9 +35,22 @@ df_scd2 = df_transformed.withColumn(
 
 # Drop type (optional) and show sample
 df_scd2 = df_scd2.drop("subscription_type")
+df_scd2 = df_scd2.withColumn("user_sk", monotonically_increasing_id())
 
-print("✅ Preview transformed user dimension with correct end dates:")
+df_scd2 = df_scd2.select(
+    "user_sk",
+    "user_id",
+    "street",
+    "number",
+    "zipcode",
+    "city",
+    "country_code",
+    "start_date",
+    "end_date"
+)
+
 df_scd2.orderBy("user_id", "start_date").show(truncate=False)
+
 
 df_scd2.createOrReplaceTempView("transformed_users")
 print("✅ User data transformed successfully!")

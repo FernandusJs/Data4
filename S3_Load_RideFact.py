@@ -16,4 +16,4 @@ df_fact_rides.write \
     .mode("overwrite") \
     .save()
 
-print("✅ 1 test row loaded into RidesFact successfully!")
+print("✅ loaded into RidesFact successfully!")
