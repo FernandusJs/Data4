@@ -64,63 +64,70 @@ df_weather_input = df_rides.join(
 URL = "https://archive-api.open-meteo.com/v1/archive"
 weather_data = []
 
-for row in df_weather_input.limit(4000).toLocalIterator():
+df_weather_input_grouped = df_weather_input.select("zipcode", "ride_date", "lat", "lon") \
+    .distinct()
+
+for row in df_weather_input_grouped.limit(5000).toLocalIterator():
     zipcode = row['zipcode']
     date = row['ride_date']
-    hour_val = row['hour']
     lat = row['lat']
     lon = row['lon']
 
-    if None in (lat, lon, date, hour_val):
+    if None in (lat, lon, date):
         continue
 
     try:
         params = {
             "latitude": lat,
             "longitude": lon,
-            "hourly": "temperature_2m",
+            "hourly": "temperature_2m,weathercode,precipitation",
             "start_date": date.strftime('%Y-%m-%d'),
             "end_date": date.strftime('%Y-%m-%d'),
             "timezone": "Europe/Brussels"
         }
 
-        # Convert params into a URL manually for debugging
-        param_str = '&'.join(f"{k}={v}" for k, v in params.items())
-        full_url = f"{URL}?{param_str}"
-        print(f"[INFO] Requesting: {full_url} for hour={hour_val}")
-
         response = requests.get(URL, params=params, timeout=10)
         if response.status_code != 200:
-            print(f"[ERROR] API failed | status: {response.status_code}")
+            print(f"[ERROR] API failed for {lat},{lon} | status: {response.status_code}")
             continue
 
         data = response.json()
-        temps = data.get("hourly", {}).get("temperature_2m", [])
+        hourly_data = data.get("hourly", {})
 
-        if hour_val is None or hour_val >= len(temps):
-            print(f"[WARN] No temperature data for hour {hour_val}")
+        temps = hourly_data.get("temperature_2m", [])
+        precs = hourly_data.get("precipitation", [])
+        codes = hourly_data.get("weathercode", [])
+
+        if not temps or not precs or not codes or len(temps) < 24:
+            print(f"[WARN] Incomplete weather data for {lat},{lon}")
             continue
 
-        temperature = temps[hour_val]
-        if temperature is None:
-            print(f"[WARN] Temperature is None | hour: {hour_val}")
-            continue
+        for hour_val in range(24):
+            temp = temps[hour_val]
+            precip = precs[hour_val]
+            code = codes[hour_val]
 
-        description = "Pleasant" if temperature >= 15 else "Unpleasant"
+            if None in (temp, precip, code):
+                category = "Unknown"
+            elif precip > 0:
+                category = "Unpleasant"
+            elif temp >= 15 and code == [0, 1, 2, 3]:
+                category = "Pleasant"
+            else:
+                category = "Neutral"
 
-        weather_data.append((
-            zipcode,
-            date,
-            hour_val,
-            float(temperature),
-            description
-        ))
+            weather_data.append((
+                zipcode,
+                date,
+                hour_val,
+                float(temp),
+                category
+            ))
 
-        time.sleep(1)  # avoid rate limit
+        time.sleep(1)  # avoid rate limiting
 
     except Exception as e:
-        print(f"[EXCEPTION] {e} | lat: {lat}, lon: {lon}, hour: {hour_val}")
-
+        print(f"[EXCEPTION] {e} | lat: {lat}, lon: {lon}")
 
 # ─── Save to PostgreSQL ────────────────────────────────────────────────────────
 if weather_data:

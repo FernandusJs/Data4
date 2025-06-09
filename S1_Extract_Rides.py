@@ -39,6 +39,41 @@ df_rides = spark.read \
     .option("password", cc.get_Property("password")) \
     .load()
 
+df_weather = spark.read \
+    .format("jdbc") \
+    .option("driver", "org.postgresql.Driver") \
+    .option("url", jdbc_url_velodb) \
+    .option("dbtable", "weather") \
+    .option("user", cc.get_Property("username")) \
+    .option("password", cc.get_Property("password")) \
+    .load()
+
+df_vehicles = spark.read \
+    .format("jdbc") \
+    .option("driver", "org.postgresql.Driver") \
+    .option("url", jdbc_url_velodb) \
+    .option("dbtable", "vehicles") \
+    .option("user", cc.get_Property("username")) \
+    .option("password", cc.get_Property("password")) \
+    .load()
+
+df_bike_types = spark.read \
+    .format("jdbc") \
+    .option("driver", "org.postgresql.Driver") \
+    .option("url", jdbc_url_velodb) \
+    .option("dbtable", "bike_types") \
+    .option("user", cc.get_Property("username")) \
+    .option("password", cc.get_Property("password")) \
+    .load()
+
+df_bikelots = spark.read \
+    .format("jdbc") \
+    .option("driver", "org.postgresql.Driver") \
+    .option("url", jdbc_url_velodb) \
+    .option("dbtable", "bikelots") \
+    .option("user", cc.get_Property("username")) \
+    .option("password", cc.get_Property("password")) \
+    .load()
 # --------------------------------------------------
 # Step 3: Extract DIM tables from data warehouse DB
 # --------------------------------------------------
@@ -59,16 +94,17 @@ df_users       = read_dim("UserDim")
 df_locks       = read_dim("LockDim")
 df_dates       = read_dim("DateDim")
 df_weather_dim = read_dim("WeatherDim")
-df_vehicles    = read_dim("VehicleDim")
+df_vehicle_dim    = read_dim("VehicleDim")
 
 # -----------------------------
 # Step 4: Register Temp Views
 # -----------------------------
 df_rides.createOrReplaceTempView("rides")
+df_weather.createOrReplaceTempView("weather")
 df_users.createOrReplaceTempView("users")
 df_locks.createOrReplaceTempView("locks")
 df_dates.createOrReplaceTempView("dates")
 df_weather_dim.createOrReplaceTempView("weatherdim")
-df_vehicles.createOrReplaceTempView("vehicles")
+df_vehicle_dim.createOrReplaceTempView("vehicles")
 
-print("✅ Extraction complete: rides (from velodb), dimensions (from dw_rides)")
+print("✅ Extraction complete: rides and weather (from velodb), dimensions (from dw_rides)")

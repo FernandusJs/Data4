@@ -58,20 +58,18 @@ df_rides_weather_coords = df_rides_transformed \
     .withColumn("lat", expr("CAST(split(split(gps_coord, ',')[0], '\\(')[1] AS DOUBLE)")) \
     .withColumn("lon", expr("CAST(split(split(gps_coord, ',')[1], '\\)')[0] AS DOUBLE)"))
 
-# 🧪 Dummy weather — replace with real later
-df_weather_raw = spark.createDataFrame([
-    (2000, "2025-05-12", 14, "Unpleasant"),
-    (3000, "2025-05-12", 15, "Pleasant"),
-], ["zipcode", "ride_date", "hour", "weather_type"])
-
+# ✅ Join with real weather data (from extracted table)
 df_rides_weather = df_rides_weather_coords \
-    .join(df_weather_raw,
-          (df_rides_weather_coords["zipcode"] == df_weather_raw["zipcode"]) &
-          (df_rides_weather_coords["ride_date"] == df_weather_raw["ride_date"]) &
-          (df_rides_weather_coords["hour"] == df_weather_raw["hour"]),
+    .join(df_weather,
+          (df_rides_weather_coords["zipcode"] == df_weather["zipcode"]) &
+          (df_rides_weather_coords["ride_date"] == df_weather["ride_date"]) &
+          (df_rides_weather_coords["hour"] == df_weather["hour"]),
           how="left") \
-    .withColumn("weather_type", when(col("weather_type").isNull(), "Unknown").otherwise(col("weather_type")))
+    .withColumn("weather_type",
+                when(col("weather_description").isNull(), "Unknown")
+                .otherwise(col("weather_description")))
 
+# ✅ Join with WeatherDim to get weather_id
 df_rides_weather = df_rides_weather.join(df_weather_dim, on="weather_type", how="left")
 
 # -----------------------------
@@ -122,13 +120,34 @@ df_user_match = df_user_match \
           df_user_match["startlockid"] == col("start_lock_id_dim2")) \
     .join(df_locks.selectExpr("lock_id as end_lock_id_dim2", "lock_id as end_lock_id"),
           df_user_match["endlockid"] == col("end_lock_id_dim2")) \
-    .join(df_vehicles.selectExpr("vehicle_id", "vehicle_id"),
-          df_user_match["vehicleid"] == col("vehicle_id"))
+
+vehicle_types = df_vehicles \
+    .join(df_bikelots, on="bikelotid", how="left") \
+    .join(df_bike_types, on="biketypeid", how="left") \
+    .select(
+        col("vehicleid").alias("vehicle_id_raw"),
+        col("biketypedescription").alias("bike_type")
+    )
+
+vehicle_lookup = vehicle_types.join(
+    df_vehicle_dim,
+    vehicle_types["bike_type"] == df_vehicle_dim["type"],
+    how="left"
+).select(
+    col("vehicle_id_raw"),
+    df_vehicle_dim["vehicle_id"].alias("final_vehicle_id")
+)
+
 
 # 📅 Join with DateDim
 df_user_match = df_user_match \
     .join(df_dates.selectExpr("date_sk as date_sk", "date as date_dim"),
           df_user_match["starttime"].cast("date") == col("date_dim"), how="left")
+# 🚲 Join with VehicleDim
+df_user_match = df_user_match \
+    .join(vehicle_lookup, df_user_match["vehicleid"] == vehicle_lookup["vehicle_id_raw"], how="left") \
+    .selectExpr("rideid", "user_sk", "start_lock_id", "end_lock_id", "date_sk", "weather_id",
+                "final_vehicle_id as vehicleid", "ride_distance", "ride_duration")
 
 # 🚫 Filter out invalid rides (negative duration)
 df_user_match = df_user_match.filter(col("ride_duration") >= 0)
@@ -141,10 +160,12 @@ df_fact_rides = df_user_match.selectExpr(
     "end_lock_id",
     "date_sk",
     "weather_id",
-    "vehicle_id",
+    "vehicleid as vehicle_id",
     "ride_distance",
     "ride_duration"
 )
+
+df_fact_rides.show(10, truncate=False)
 
 df_fact_rides.createOrReplaceTempView("transformed_fact_rides")
 print("✅ RideFact transformed successfully")
