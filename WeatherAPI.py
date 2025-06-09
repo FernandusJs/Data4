@@ -13,7 +13,6 @@ builder = SparkSession.builder.appName("Weather API ETL") \
     .master("local[4]")\
     .config("spark.driver.memory", "4g")
 
-
 extra_packages = [
     "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2",
     "org.postgresql:postgresql:42.7.4"
@@ -52,10 +51,10 @@ df_weather_input = df_rides.join(
     df_rides["startlockid"] == col("start_lock_id_dim"),
     how="left"
 ).withColumn("hour", hour("starttime")) \
- .withColumn("lat", expr("CAST(split(split(gpscoord, ',')[0], '\\(')[1] AS DOUBLE)")) \
- .withColumn("lon", expr("CAST(split(split(gpscoord, ',')[1], '\\)')[0] AS DOUBLE)"))
+ .withColumn("lat", expr("CAST(split(split(gpscoord, ',')[0], '\\\\(')[1] AS DOUBLE)")) \
+ .withColumn("lon", expr("CAST(split(split(gpscoord, ',')[1], '\\\\)')[0] AS DOUBLE)"))
 
-# ─── Open-Meteo API ─────────────────────────────────────────────────────────────
+# ─── Open-Meteo API Integration ────────────────────────────────────────────────
 URL = "https://api.open-meteo.com/v1/forecast"
 weather_data = []
 
@@ -66,7 +65,7 @@ for row in df_weather_input.toLocalIterator():
     lat = row['lat']
     lon = row['lon']
 
-    if lat is None or lon is None or date is None or hour_val is None:
+    if None in (lat, lon, date, hour_val):
         continue
 
     try:
@@ -78,10 +77,24 @@ for row in df_weather_input.toLocalIterator():
             "end_date": date.strftime('%Y-%m-%d'),
             "timezone": "Europe/Brussels"
         }
-        response = requests.get(URL, params=params, timeout=10)
-        data = response.json()
 
-        temperature = data['hourly']['temperature_2m'][hour_val]
+        response = requests.get(URL, params=params, timeout=10)
+        if response.status_code != 200:
+            print(f"API failed | lat: {lat}, lon: {lon}, hour: {hour_val} | status: {response.status_code}")
+            continue
+
+        data = response.json()
+        temps = data.get("hourly", {}).get("temperature_2m", [])
+
+        if hour_val is None or hour_val >= len(temps):
+            print(f"No temperature data for hour {hour_val} | lat: {lat}, lon: {lon}")
+            continue
+
+        temperature = temps[hour_val]
+        if temperature is None:
+            print(f"Temperature is None | lat: {lat}, lon: {lon}, hour: {hour_val}")
+            continue
+
         description = "Pleasant" if temperature >= 15 else "Unpleasant"
 
         weather_data.append((
@@ -92,24 +105,27 @@ for row in df_weather_input.toLocalIterator():
             description
         ))
 
-        time.sleep(1)  # Respect rate limit
+        time.sleep(1)  # Be gentle with the API
+
     except Exception as e:
-        print(f" Error: {e} | lat: {lat}, lon: {lon}, hour: {hour_val}")
+        print(f"Error: {e} | lat: {lat}, lon: {lon}, hour: {hour_val}")
 
-# ─── Save Result to PostgreSQL ──────────────────────────────────────────────────
-df_weather = spark.createDataFrame(
-    weather_data,
-    ["zipcode", "ride_date", "hour", "temperature", "weather_description"]
-)
+# ─── Save to PostgreSQL ────────────────────────────────────────────────────────
+if weather_data:
+    df_weather = spark.createDataFrame(
+        weather_data,
+        ["zipcode", "ride_date", "hour", "temperature", "weather_description"]
+    )
 
-df_weather.show(10, truncate=False)
+    df_weather.show(10, truncate=False)
 
-
-df_weather.write.format("jdbc") \
-     .option("url", jdbc_url) \
-     .option("driver", "org.postgresql.Driver") \
-     .option("dbtable", "weather") \
-     .option("user", cc.get_Property("username")) \
-     .option("password", cc.get_Property("password")) \
-     .mode("append") \
-     .save()
+    df_weather.write.format("jdbc") \
+         .option("url", jdbc_url) \
+         .option("driver", "org.postgresql.Driver") \
+         .option("dbtable", "weather") \
+         .option("user", cc.get_Property("username")) \
+         .option("password", cc.get_Property("password")) \
+         .mode("append") \
+         .save()
+else:
+    print("No weather data collected. Nothing to write.")
