@@ -1,16 +1,16 @@
+from S1_Extract_Vehicle import spark
 from pyspark.sql.functions import col
 
-from S1_Extract_Vehicle import spark
+# Load the source
+df_bike_types = spark.sql("SELECT * FROM bike_types")
 
-df_transformed = spark.sql("""
-    SELECT 
-        v.vehicleid AS vehicle_id,
-        bt.biketypedescription AS type
-    FROM vehicles v
-    JOIN bikelots bl ON v.bikelotid = bl.bikelotid
-    JOIN bike_types bt ON bl.biketypeid = bt.biketypeid
-""")
+# Rename columns to match target schema
+df_transformed = df_bike_types.select(
+    col("biketypeid").alias("vehicle_id"),
+    col("biketypedescription").alias("type")
+)
 
+# Register for use in S3
 df_transformed.createOrReplaceTempView("transformed_vehicle")
 
-print("Vehicle data transformed successfully!")
+print("✅ S2: bike_types renamed to match VehicleDim schema.")

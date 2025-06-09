@@ -1,9 +1,13 @@
+# S3_Load_Vehicle.py
+
 from S2_Transform_Vehicle import df_transformed
 import ConnectionConfig as cc
 
+# Connect to dw_rides
 cc.set_connectionProfile("dw_rides")
 jdbc_url_target = cc.create_jdbc()
 
+# Write to VehicleDim table
 df_transformed.write \
     .format("jdbc") \
     .option("driver", "org.postgresql.Driver") \
@@ -11,7 +15,7 @@ df_transformed.write \
     .option("dbtable", "VehicleDim") \
     .option("user", cc.get_Property("username")) \
     .option("password", cc.get_Property("password")) \
-    .mode("append") \
+    .mode("overwrite") \
     .save()
 
-print("VehicleDim table loaded successfully!")
+print("✅ S3: VehicleDim table loaded successfully!")

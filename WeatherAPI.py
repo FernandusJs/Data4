@@ -2,6 +2,9 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, hour, to_date, expr
 import requests
 import time
+
+from pyspark.sql.types import IntegerType
+
 import ConnectionConfig as cc
 from delta import configure_spark_with_delta_pip
 
@@ -52,13 +55,16 @@ df_weather_input = df_rides.join(
     how="left"
 ).withColumn("hour", hour("starttime")) \
  .withColumn("lat", expr("CAST(split(split(gpscoord, ',')[0], '\\\\(')[1] AS DOUBLE)")) \
- .withColumn("lon", expr("CAST(split(split(gpscoord, ',')[1], '\\\\)')[0] AS DOUBLE)"))
+ .withColumn("lon", expr("CAST(split(split(gpscoord, ',')[1], '\\\\)')[0] AS DOUBLE)"))\
+    .select("zipcode", "ride_date", "hour", "lat", "lon") \
+ .distinct()
+
 
 # ─── Open-Meteo API Integration ────────────────────────────────────────────────
-URL = "https://api.open-meteo.com/v1/forecast"
+URL = "https://archive-api.open-meteo.com/v1/archive"
 weather_data = []
 
-for row in df_weather_input.toLocalIterator():
+for row in df_weather_input.limit(4000).toLocalIterator():
     zipcode = row['zipcode']
     date = row['ride_date']
     hour_val = row['hour']
@@ -78,21 +84,26 @@ for row in df_weather_input.toLocalIterator():
             "timezone": "Europe/Brussels"
         }
 
+        # Convert params into a URL manually for debugging
+        param_str = '&'.join(f"{k}={v}" for k, v in params.items())
+        full_url = f"{URL}?{param_str}"
+        print(f"[INFO] Requesting: {full_url} for hour={hour_val}")
+
         response = requests.get(URL, params=params, timeout=10)
         if response.status_code != 200:
-            print(f"API failed | lat: {lat}, lon: {lon}, hour: {hour_val} | status: {response.status_code}")
+            print(f"[ERROR] API failed | status: {response.status_code}")
             continue
 
         data = response.json()
         temps = data.get("hourly", {}).get("temperature_2m", [])
 
         if hour_val is None or hour_val >= len(temps):
-            print(f"No temperature data for hour {hour_val} | lat: {lat}, lon: {lon}")
+            print(f"[WARN] No temperature data for hour {hour_val}")
             continue
 
         temperature = temps[hour_val]
         if temperature is None:
-            print(f"Temperature is None | lat: {lat}, lon: {lon}, hour: {hour_val}")
+            print(f"[WARN] Temperature is None | hour: {hour_val}")
             continue
 
         description = "Pleasant" if temperature >= 15 else "Unpleasant"
@@ -105,17 +116,18 @@ for row in df_weather_input.toLocalIterator():
             description
         ))
 
-        time.sleep(1)  # Be gentle with the API
+        time.sleep(1)  # avoid rate limit
 
     except Exception as e:
-        print(f"Error: {e} | lat: {lat}, lon: {lon}, hour: {hour_val}")
+        print(f"[EXCEPTION] {e} | lat: {lat}, lon: {lon}, hour: {hour_val}")
+
 
 # ─── Save to PostgreSQL ────────────────────────────────────────────────────────
 if weather_data:
     df_weather = spark.createDataFrame(
         weather_data,
         ["zipcode", "ride_date", "hour", "temperature", "weather_description"]
-    )
+    ).withColumn("zipcode",col("zipcode").cast(IntegerType()))
 
     df_weather.show(10, truncate=False)
 
